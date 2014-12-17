@@ -168,7 +168,7 @@ with $d_j$ the number of levels for feature $j$. The optimal GoM $g$ and distrib
 
 One main challenge of GoM model may be to determine the proper number of clusters K \cite{mixmemint}, but in \cite{malaria} it is inherently fixed at 2 by the objectives of the problem (predicting low or high profile of malaria risk). It is however less explicit to determine from which domains select variables for $X$, and how many level to defined for each of these variables. The categorization is indeed here more driven by "subject matter interpretations of meaningfully different levels of risk" more than on statistical cateogorization, such as quantiles. On that side, a novelty introduced by the paper is to distinguish two domains of features which will determine risk profiles, environmental features and behavioral/economic features.\\
 
-Most importantly, the categorizatoin is not based on the expected result of the clustering (malaria risk for \cite{malaria}, but on other variables that are likely to influence the result metric. To assess the quality of the resulting high-risk low-risk clustering, the authors of \cite{malaria} plot $g_{high}$ against the exposure-weighted malaria illness rate (EWR), which is a metric representing risk of malaria in the region.
+Most importantly, the categorization is not based on the expected result of the clustering (malaria risk for \cite{malaria}, but on other variables that are likely to influence the result metric. To assess the quality of the resulting high-risk low-risk clustering, the authors of \cite{malaria} plot $g_{high}$ against the exposure-weighted malaria illness rate (EWR), which is a metric representing risk of malaria in the region.
 
 
 
@@ -208,7 +208,16 @@ R_{clust} = \frac{sep_{inter}}{var_{intra}}
 \end{equation}
 $sep_{inter}$ being the inter-centroidal separation and $var_{intra}$ the intra-cluster variance. An adapted metric for fuzzy clustering is also computed. Results for some \textit{spread profile strucure} are documented in Table 1.\\
 
-As a way to obtain the optimal \textit{spread profile schema} for our problem, we tried implementing a Genetic Algorithm method. Its chromosome structure encodes the number of levels for each features, and its fitness function is the clustering goodness of fit defined in (2) (fuzzy version). However we failed to define a crossover function that would efficiently explore the relevant chromosome space.
+As a way to obtain the optimal \textit{spread profile schema} for our problem, we tried implementing a Genetic Algorithm method. Its chromosome structure encodes the number of levels for each features, and its fitness function is the clustering goodness of fit defined in (2) (fuzzy version). However we failed to define a crossover function that would efficiently explore the relevant chromosome space.\\
+
+Adapting figure 2 of \cite{malaria}, we ploted GoM versus R-square obtained with the SIR model, grouped by country. Plots for bicategory (all category have 2 levels) schema is displayed on figure 3.
+
+\vspace{.2 in}
+\begingroup
+\centering
+\includegraphics[scale=0.35]{./img/gom_rsq_bicat.png}
+\captionof{figure}{Subareas SIR model fit ($R^2$) as a function of GoM scores (degree of belonging to \texttt{high-speed}).}
+\endgroup
 
 \section{Implementation}
 
@@ -223,7 +232,8 @@ The structure of the code is as follows:
 \item \texttt{SIR\_fit.R}: Functions to assess the quality of a clustering result and plot metric against GoM $g$, given the SIR regional fits.
 \item \texttt{local\_optim.R}: Test GoM model locally, on first spread profile schemas. Also computes the matrix of suggested schemas to be tried on Odyssey.
 \item \texttt{local\_ga.R}: Attempt to use Genetic Algorithm to determine best schema.
-\item \texttt{mle\_task.R}: Try 100 schemas on 10 machines with Odyssey.
+\item \texttt{schemas.R}: Data visualization of some feature distributions, and compute the schemas to be tried on Odyssey.
+\item \texttt{mle\_task.R}: Try 100 schemas on 10 machines with Odyssey, triggered by \texttt{sbatch --array=1-10 mle.slurm}.
 \end{itemize}
 
 To perform the constraint optimization on the $\theta$s, we use the tranformation between the simplex and $\mathcal{R}^{d_p}$:

@@ -41,18 +41,50 @@ ClustRes <- function(chrom) {
   colnames(G.hat) <- c("sdr.id", "g.low", "g.high")
   clust <- data.frame(sdr.id=G.hat$sdr.id, high=as.numeric(G.hat$g.high >= 0.5))
   clust <- clust[order(clust$sdr.id), ] # Make sure order is right
-  clust.res <- EvalFuzzClust(clust) # Metrics from clustering
+  hclust.res <- EvalHardClust(clust) # Metrics from clustering
+  fclust.res <- EvalFuzzClust(G.hat)
   
-  return(list(clust.res=clust.res, g=G.hat))
+  return(list(hclust.res=hclust.res, fclust.res=fclust.res, g=G.hat))
   
 }
 
-# Fitness of a chromosome
+# Fitness of a chromosome (using ChromRes within did not work)
 Fitness <- function(chrom) {
   
-  clust.res <- ClustRes(chrom)$clust.res # Metrics from clustering
+  ## Format sequence for each feature
+  seqs <- sapply(1:n.feat, function(n) {
+    chrom[(1 + (n - 1) * (max.lev + 1)):(n * (max.lev + 1))]
+  }, simplify=F)
+  sums <- unlist(lapply(seqs, function(x) {sum(x)}))
   
-  return(as.numeric(clust.res$cl.met))
+  if (!all(sums == 1)) {
+    return(-100) # Unvalid format of chromosome
+  }
+  
+  ## Get chromosome encoded levels
+  lev <- unlist(lapply(seqs, function(x) {return(match(1, x) - 1)}))
+  cat.age <- lev[length(lev)]
+  age <- cat.age != 0
+  lev <- lev[1:(length(lev) - 1)]
+  fn <- feature.names[lev != 0]
+  lev.feat <- lev[lev != 0]
+  
+  ## Compute categorical data and fit MLE
+  feat <- ComputeCatDf(feature.names, rep(2, length(feature.names)), age=T, cat.age=2)
+  obs <- feat[2:length(feat)] # Remove sdr_id col
+  # theta0 uniform
+  theta0 <- PriorTheta(c(rep(2, length(feature.names)), 4))
+  # G0 uniform
+  G0 <- matrix(data=0.5, nrow=dim(obs)[1], 2)
+  # Compute estimates
+  gom.est <- gomMLE(obs, G0, theta0, epsilon=1e-2, verbose=F)
+  G.hat <- data.frame(sdr.id=feat$sdr.id, g.hat=gom.est$G.hat)
+  colnames(G.hat) <- c("sdr.id", "g.low", "g.high")
+  clust <- data.frame(sdr.id=G.hat$sdr.id, high=as.numeric(G.hat$g.high >= 0.5))
+  clust <- clust[order(clust$sdr.id), ] # Make sure order is right
+  fclust.res <- EvalFuzzClust(G.hat)
+  
+  return(as.numeric(fclust.res$cl.met))
   
 }
 

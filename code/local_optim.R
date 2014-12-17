@@ -35,3 +35,6 @@ hclust.res <- EvalHardClust(clust) # Metrics from clustering
 print(paste("Hard clust metric: ", hclust.res$cl.met, sep=""))
 fclust.res <- EvalFuzzClust(G.hat)
 print(paste("Fuzzy clust metric: ", fclust.res$cl.met, sep=""))
+
+PlotClust(G.hat)
+
