@@ -1,4 +1,3 @@
-library(GA)
 source("dat_format.R")
 source("MLE.R")
 source("SIR_fit.R")

@@ -1,3 +1,4 @@
+library(GA)
 source("ga.R")
 
 ## Try GA
