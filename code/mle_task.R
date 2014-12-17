@@ -19,7 +19,7 @@ if (Sys.getenv("SLURM_JOB_ID") != "") { # Divide computation per tasks
   clust.met <- c()
   
   for (i in (1 + (task.id - 1) * N.sch):(task.id * N.sch)) {
-    chrom <- schem.sugg[i, ]
+    chrom <- sugg[i, ]
     clust.out <- ClustRes(chrom)
     
     save(clust.out, file=paste("./out/clustres_", task.id, ".dat", sep=""))

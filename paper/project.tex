@@ -208,6 +208,21 @@ R_{clust} = \frac{sep_{inter}}{var_{intra}}
 \end{equation}
 $sep_{inter}$ being the inter-centroidal separation and $var_{intra}$ the intra-cluster variance. An adapted metric for fuzzy clustering is also computed. Results for some \textit{spread profile strucure} are documented in Table 1.\\
 
+\begin{table}
+\caption{Goodness of clustering of SIR $R^2$ values based on different spread profile schemas. Hard clustering and fuzzy clustering metrics reported.}
+\label{aic}
+\centering
+\begin{tabular}{llll}
+\toprule\
+Schema & Hard Cluster & Fuzzy Cluster\\
+\midrule
+Bicategory & 2.62  & 3.09 \\
+Best empirical & 2465 & 2444\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
 As a way to obtain the optimal \textit{spread profile schema} for our problem, we tried implementing a Genetic Algorithm method. Its chromosome structure encodes the number of levels for each features, and its fitness function is the clustering goodness of fit defined in (2) (fuzzy version). However we failed to define a crossover function that would efficiently explore the relevant chromosome space.\\
 
 Adapting figure 2 of \cite{malaria}, we ploted GoM versus R-square obtained with the SIR model, grouped by country. Plots for bicategory (all category have 2 levels) schema is displayed on figure 3.
