@@ -6,7 +6,7 @@ data.cov <- read.table(file="../dat/merged_covariate_df.csv", header=TRUE, sep='
 # Colnames to be considered
 c.name <- colnames(data.cov)
 region.names <- c.name[1:7]
-feature.names <- c.name[match('iwi', c.name):(match('age09', c.name) - 1)]
+feature.names <- c.name[match('standardized_2014_pop', c.name):(match('age09', c.name) - 1)]
 
 # Transform standard feature into categorical data based on quantiles
 CatTransf <- function(array, ncat=2) {

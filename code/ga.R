@@ -4,11 +4,11 @@ source("SIR_fit.R")
 
 # Genetic Algorithm to optimize feature selection
 
-n.feat <- 19
+n.feat <- 21
 max.lev <- 5
 
-# Clustering result of a chromosome
-ClustRes <- function(chrom) {
+# Chromosome to levels
+ChromToLevel <- function(chrom) {
   
   ## Format sequence for each feature
   seqs <- sapply(1:n.feat, function(n) {
@@ -22,6 +22,15 @@ ClustRes <- function(chrom) {
   
   ## Get chromosome encoded levels
   lev <- unlist(lapply(seqs, function(x) {return(match(1, x) - 1)}))
+  
+  return(lev)
+}
+
+# Clustering result of a chromosome
+ClustRes <- function(chrom) {
+  
+  ## Get chromosome encoded levels
+  lev <- ChromToLevel(chrom)
   cat.age <- lev[length(lev)]
   age <- cat.age != 0
   lev <- lev[1:(length(lev) - 1)]
@@ -51,18 +60,8 @@ ClustRes <- function(chrom) {
 # Fitness of a chromosome (using ChromRes within did not work)
 Fitness <- function(chrom) {
   
-  ## Format sequence for each feature
-  seqs <- sapply(1:n.feat, function(n) {
-    chrom[(1 + (n - 1) * (max.lev + 1)):(n * (max.lev + 1))]
-  }, simplify=F)
-  sums <- unlist(lapply(seqs, function(x) {sum(x)}))
-  
-  if (!all(sums == 1)) {
-    return(-100) # Unvalid format of chromosome
-  }
-  
   ## Get chromosome encoded levels
-  lev <- unlist(lapply(seqs, function(x) {return(match(1, x) - 1)}))
+  lev <- ChromToLevel(chrom)
   cat.age <- lev[length(lev)]
   age <- cat.age != 0
   lev <- lev[1:(length(lev) - 1)]
@@ -99,7 +98,7 @@ InitialChrom <- function(n.feat=19, max.lev=5) {
 }
 
 # Compute random suggestions
-Suggestions <- function(num=100, n.feat=19, max.lev=5) {
+Suggestions <- function(num=100, n.feat=21, max.lev=5) {
   if (max.lev < 2) {
     stop("Need at least max level of 2.")
   }
